@@ -113,7 +113,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Tab Home'),
+                const Text(
+                  'Tab Home',
+                  style: TextStyle(fontFamily: "THSarabunNew"),
+                ),
                 ElevatedButton(
                   // ปุ่มสำหรับทดสอบ
                   onPressed: () {
@@ -127,7 +130,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
           const Center(child: Text('Tab Faverite')),
           const Center(child: Text('Tab Like')),
-          const Center(child: Text('Tab Commnet')),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Tab Commnet'),
+                Text(
+                  'Tab Commnet',
+                  style: TextStyle(
+                    fontFamily: "THSarabunNew",
+                    fontSize: 20,
+                    fontWeight: FontWeight(700),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
 

@@ -21,7 +21,9 @@ flutter:
   fonts:
     - family: THSarabunNew
       fonts:
-        - asset: assets/fonts/THSarabunNew Bold.ttf
+        - asset: assets/fonts/THSarabunNew.ttf
+    - family: THSarabunNewItalic
+      fonts:
         - asset: assets/fonts/THSarabunNew Italic.ttf
           style: italic
     - family: Takowasabi
