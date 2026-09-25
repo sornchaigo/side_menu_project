@@ -14,8 +14,22 @@ class Home extends StatefulWidget {
   }
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // กำหนดค่าเริ่มต้น
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   static const List<Widget> _pageWidget = <Widget>[
     Text('Index 0: สวัสดี', style: TextStyle(fontFamily: "Takowasabi")),
@@ -46,35 +60,6 @@ class _HomeState extends State<Home> {
   void _showSnackBar(String text) {
     // เมื่อกดที่ปุ่ม
 
-    // // กำหนดรูปแบบการใช้งาน snackbar
-    // final snackBar1 = SnackBar(
-    //   content: const Text('Yay! A SnackBar!'), // แสดงข้อความ
-    //   action: SnackBarAction(
-    //     label: 'Undo',
-    //     onPressed: () {
-    //       // ทำคำสั่งถ้ากดที่ข้อความใน action
-    //     },
-    //   ),
-    // );
-
-    // // กำหนดรูปแบบการใช้งาน snackbar
-    // final snackBar2 = SnackBar(
-    //   content: Row(
-    //     // แสดงข้อมูลอื่นๆ นอกจากข้อความอย่างเดียว
-    //     children: [
-    //       Icon(Icons.info_rounded, color: Colors.yellow), // ใส่ไอคอน
-    //       SizedBox(width: 10), // เพิ่มกล่องช่องว่าง
-    //       Expanded(child: Text('ทำรายการเรียบร้อยแล้ว!')),
-    //     ],
-    //   ),
-    //   action: SnackBarAction(
-    //     label: 'ดูเพิ่มเติม',
-    //     onPressed: () {
-    //       // ทำคำสั่งถ้ากดที่ข้อความใน action
-    //     },
-    //   ),
-    // );
-
     // กำหนดรูปแบบการใช้งาน snackbar
     final snackBar3 = SnackBar(
       content: Row(
@@ -104,105 +89,54 @@ class _HomeState extends State<Home> {
       ..showSnackBar(snackBar3);
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     drawer: SideMenu(),
-  //     appBar: AppBar(title: Text('Home')),
-  //     body: Center(
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           _pageWidget.elementAt(_selectedIndex),
-
-  //           // เพิ่มปุ่ม
-  //           ElevatedButton(
-  //             onPressed: () => _showSnackBar("สวัสดี"),
-  //             child: const Text('Show SnackBar'),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-
-  //     bottomNavigationBar: BottomNavigationBar(
-  //       items: _menuBar,
-  //       selectedItemColor: Theme.of(context).primaryColor,
-  //       unselectedItemColor: Colors.blue,
-  //       currentIndex: _selectedIndex,
-  //       onTap: _onItemTapped,
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      // ใช้งาน DefaultTabController
-      length: 4, // กำหนดจำนวน tab
-      child: Builder(
-        builder: (BuildContext context) {
-          // เรียกใช้งาน TabController
-          final TabController tabController = DefaultTabController.of(context);
-          tabController.addListener(() {
-            // ตรวจจับการทำงาน
-            if (!tabController.indexIsChanging) {
-              // มีการเปลี่ยน tab
-              // กำหนดคำสั่งตรงนี้
-              // tabController.animateTo(3); ไปยัง tab ที่กำหนด
-              // tabController.index ค่า index ที่เปลี่ยน
-              // tabController.previousIndex ค่า index ก่อนเปลี่ยน
-              print(tabController.index);
-              print(tabController.previousIndex);
-            }
-          });
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Home'),
-              bottom: const TabBar(
-                // ส่วนของ tab
-                tabs: [
-                  Tab(icon: Icon(Icons.feed), text: 'Tab 1'),
-                  Tab(icon: Icon(Icons.favorite_sharp), text: 'Tab 2'),
-                  Tab(icon: Icon(Icons.thumb_up), text: 'Tab 3'),
-                  Tab(icon: Icon(Icons.announcement), text: 'Tab 4'),
-                ],
-              ),
-            ),
-            body: TabBarView(
-              // ส่วนของเนื้อหา tab
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+        bottom: TabBar(
+          controller: _tabController, // กำหนดการเรียกใช้งาน TabController
+          // ส่วนของ tab
+          tabs: const [
+            Tab(icon: Icon(Icons.feed), text: 'Tab 1'),
+            Tab(icon: Icon(Icons.favorite_sharp), text: 'Tab 2'),
+            Tab(icon: Icon(Icons.thumb_up), text: 'Tab 3'),
+            Tab(icon: Icon(Icons.announcement), text: 'Tab 4'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController, // กำหนดการเรียกใช้งาน TabController
+        // ส่วนของเนื้อหา tab
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Tab Home'),
-                      ElevatedButton(
-                        // ปุ่มสำหรับทดสอบ
-                        onPressed: () {
-                          // เลื่อนไปยัง index 3 ซึ่งก็คือค่า index ของ tab ที่ 4
-                          tabController.animateTo(3);
-                        },
-                        child: const Text('Go to Tab 4'),
-                      ),
-                    ],
-                  ),
+                const Text('Tab Home'),
+                ElevatedButton(
+                  // ปุ่มสำหรับทดสอบ
+                  onPressed: () {
+                    // เลื่อนไปยัง index 3 ซึ่งก็คือค่า index ของ tab ที่ 4
+                    _tabController.animateTo(3);
+                  },
+                  child: const Text('Go to Tab 4'),
                 ),
-                const Center(child: Text('Tab Faverite')),
-                const Center(child: Text('Tab Like')),
-                const Center(child: Text('Tab Commnet')),
               ],
             ),
+          ),
+          const Center(child: Text('Tab Faverite')),
+          const Center(child: Text('Tab Like')),
+          const Center(child: Text('Tab Commnet')),
+        ],
+      ),
 
-            bottomNavigationBar: BottomNavigationBar(
-              items: _menuBar,
-              selectedItemColor: Theme.of(context).primaryColor,
-              unselectedItemColor: Colors.blue,
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
-          );
-        },
+      bottomNavigationBar: BottomNavigationBar(
+        items: _menuBar,
+        selectedItemColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Colors.blue,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
