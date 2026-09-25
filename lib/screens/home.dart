@@ -161,6 +161,14 @@ class _HomeState extends State<Home> {
             Center(child: Text('Tab Commnet')),
           ],
         ),
+
+        bottomNavigationBar: BottomNavigationBar(
+          items: _menuBar,
+          selectedItemColor: Theme.of(context).primaryColor,
+          unselectedItemColor: Colors.blue,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
