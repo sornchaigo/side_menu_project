@@ -104,34 +104,63 @@ class _HomeState extends State<Home> {
       ..showSnackBar(snackBar3);
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     drawer: SideMenu(),
+  //     appBar: AppBar(title: Text('Home')),
+  //     body: Center(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           _pageWidget.elementAt(_selectedIndex),
+
+  //           // เพิ่มปุ่ม
+  //           ElevatedButton(
+  //             onPressed: () => _showSnackBar("สวัสดี"),
+  //             child: const Text('Show SnackBar'),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+
+  //     bottomNavigationBar: BottomNavigationBar(
+  //       items: _menuBar,
+  //       selectedItemColor: Theme.of(context).primaryColor,
+  //       unselectedItemColor: Colors.blue,
+  //       currentIndex: _selectedIndex,
+  //       onTap: _onItemTapped,
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: SideMenu(),
-      appBar: AppBar(title: Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return DefaultTabController(
+      // ใช้งาน DefaultTabController
+      length: 4, // กำหนดจำนวน tab
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Home'),
+          bottom: const TabBar(
+            // ส่วนของ tab
+            tabs: [
+              Tab(icon: Icon(Icons.feed), text: 'Tab 1'),
+              Tab(icon: Icon(Icons.favorite_sharp), text: 'Tab 2'),
+              Tab(icon: Icon(Icons.thumb_up), text: 'Tab 3'),
+              Tab(icon: Icon(Icons.announcement), text: 'Tab 4'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          // ส่วนของเนื้อหา tab
           children: [
-            _pageWidget.elementAt(_selectedIndex),
-
-            // เพิ่มปุ่ม
-            ElevatedButton(
-              onPressed: () => _showSnackBar("สวัสดี"),
-              child: const Text('Show SnackBar'),
-            ),
+            Center(child: Text('Tab Home')),
+            Center(child: Text('Tab Faverite')),
+            Center(child: Text('Tab Like')),
+            Center(child: Text('Tab Commnet')),
           ],
         ),
-      ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        items: _menuBar,
-
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.blue,
-
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
