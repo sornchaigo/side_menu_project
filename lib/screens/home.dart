@@ -139,36 +139,55 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
       // ใช้งาน DefaultTabController
       length: 4, // กำหนดจำนวน tab
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-          bottom: const TabBar(
-            // ส่วนของ tab
-            tabs: [
-              Tab(icon: Icon(Icons.feed), text: 'Tab 1'),
-              Tab(icon: Icon(Icons.favorite_sharp), text: 'Tab 2'),
-              Tab(icon: Icon(Icons.thumb_up), text: 'Tab 3'),
-              Tab(icon: Icon(Icons.announcement), text: 'Tab 4'),
-            ],
-          ),
-        ),
-        body: const TabBarView(
-          // ส่วนของเนื้อหา tab
-          children: [
-            Center(child: Text('Tab Home')),
-            Center(child: Text('Tab Faverite')),
-            Center(child: Text('Tab Like')),
-            Center(child: Text('Tab Commnet')),
-          ],
-        ),
+      child: Builder(
+        builder: (BuildContext context) {
+          // เรียกใช้งาน TabController
+          final TabController tabController = DefaultTabController.of(context);
+          tabController.addListener(() {
+            // ตรวจจับการทำงาน
+            if (!tabController.indexIsChanging) {
+              // มีการเปลี่ยน tab
+              // กำหนดคำสั่งตรงนี้
+              // tabController.animateTo(3); ไปยัง tab ที่กำหนด
+              // tabController.index ค่า index ที่เปลี่ยน
+              // tabController.previousIndex ค่า index ก่อนเปลี่ยน
+              print(tabController.index);
+              print(tabController.previousIndex);
+            }
+          });
 
-        bottomNavigationBar: BottomNavigationBar(
-          items: _menuBar,
-          selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.blue,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Home'),
+              bottom: const TabBar(
+                // ส่วนของ tab
+                tabs: [
+                  Tab(icon: Icon(Icons.feed), text: 'Tab 1'),
+                  Tab(icon: Icon(Icons.favorite_sharp), text: 'Tab 2'),
+                  Tab(icon: Icon(Icons.thumb_up), text: 'Tab 3'),
+                  Tab(icon: Icon(Icons.announcement), text: 'Tab 4'),
+                ],
+              ),
+            ),
+            body: const TabBarView(
+              // ส่วนของเนื้อหา tab
+              children: [
+                Center(child: Text('Tab Home')),
+                Center(child: Text('Tab Faverite')),
+                Center(child: Text('Tab Like')),
+                Center(child: Text('Tab Commnet')),
+              ],
+            ),
+
+            bottomNavigationBar: BottomNavigationBar(
+              items: _menuBar,
+              selectedItemColor: Theme.of(context).primaryColor,
+              unselectedItemColor: Colors.blue,
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          );
+        },
       ),
     );
   }
