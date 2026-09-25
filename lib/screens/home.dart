@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pageWidget = <Widget>[
-    Text('Index 0: Home'),
+    Text('Index 0: สวัสดี', style: TextStyle(fontFamily: "Takowasabi")),
     Text('Index 1: About'),
     Text('Index 2: Profile'),
     Text('Index 3: Contact'),
@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
 
   static const List<BottomNavigationBarItem> _menuBar =
       <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'สวัสดี'),
         BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         BottomNavigationBarItem(
@@ -117,7 +117,7 @@ class _HomeState extends State<Home> {
 
             // เพิ่มปุ่ม
             ElevatedButton(
-              onPressed: () => _showSnackBar("Hi"),
+              onPressed: () => _showSnackBar("สวัสดี"),
               child: const Text('Show SnackBar'),
             ),
           ],
