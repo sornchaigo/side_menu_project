@@ -43,6 +43,67 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _showSnackBar(String text) {
+    // เมื่อกดที่ปุ่ม
+
+    // // กำหนดรูปแบบการใช้งาน snackbar
+    // final snackBar1 = SnackBar(
+    //   content: const Text('Yay! A SnackBar!'), // แสดงข้อความ
+    //   action: SnackBarAction(
+    //     label: 'Undo',
+    //     onPressed: () {
+    //       // ทำคำสั่งถ้ากดที่ข้อความใน action
+    //     },
+    //   ),
+    // );
+
+    // // กำหนดรูปแบบการใช้งาน snackbar
+    // final snackBar2 = SnackBar(
+    //   content: Row(
+    //     // แสดงข้อมูลอื่นๆ นอกจากข้อความอย่างเดียว
+    //     children: [
+    //       Icon(Icons.info_rounded, color: Colors.yellow), // ใส่ไอคอน
+    //       SizedBox(width: 10), // เพิ่มกล่องช่องว่าง
+    //       Expanded(child: Text('ทำรายการเรียบร้อยแล้ว!')),
+    //     ],
+    //   ),
+    //   action: SnackBarAction(
+    //     label: 'ดูเพิ่มเติม',
+    //     onPressed: () {
+    //       // ทำคำสั่งถ้ากดที่ข้อความใน action
+    //     },
+    //   ),
+    // );
+
+    // กำหนดรูปแบบการใช้งาน snackbar
+    final snackBar3 = SnackBar(
+      content: Row(
+        // แสดงข้อมูลอื่นๆ นอกจากข้อความอย่างเดียว
+        children: [
+          Icon(Icons.info_rounded, color: Colors.yellow), // ใส่ไอคอน
+          SizedBox(width: 10), // เพิ่มกล่องช่องว่าง
+          Expanded(child: Text(text)),
+        ],
+      ),
+      duration: const Duration(seconds: 3), // กำหนดเวลาแสดง 3 วินาที
+      width: 300.0, // กำหนดความกว้่าง
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      action: SnackBarAction(
+        label: 'ดูเพิ่มเติม',
+        onPressed: () {
+          // ทำคำสั่งถ้ากดที่ข้อความใน action
+        },
+      ),
+    );
+
+    // แสดงข้อความ snackbar โดยเรียกใช้งานผ่าน ScaffoldMessenger
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(snackBar3);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +112,15 @@ class _HomeState extends State<Home> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [_pageWidget.elementAt(_selectedIndex)],
+          children: [
+            _pageWidget.elementAt(_selectedIndex),
+
+            // เพิ่มปุ่ม
+            ElevatedButton(
+              onPressed: () => _showSnackBar("Hi"),
+              child: const Text('Show SnackBar'),
+            ),
+          ],
         ),
       ),
 
