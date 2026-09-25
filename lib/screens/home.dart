@@ -169,13 +169,28 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            body: const TabBarView(
+            body: TabBarView(
               // ส่วนของเนื้อหา tab
               children: [
-                Center(child: Text('Tab Home')),
-                Center(child: Text('Tab Faverite')),
-                Center(child: Text('Tab Like')),
-                Center(child: Text('Tab Commnet')),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Tab Home'),
+                      ElevatedButton(
+                        // ปุ่มสำหรับทดสอบ
+                        onPressed: () {
+                          // เลื่อนไปยัง index 3 ซึ่งก็คือค่า index ของ tab ที่ 4
+                          tabController.animateTo(3);
+                        },
+                        child: const Text('Go to Tab 4'),
+                      ),
+                    ],
+                  ),
+                ),
+                const Center(child: Text('Tab Faverite')),
+                const Center(child: Text('Tab Like')),
+                const Center(child: Text('Tab Commnet')),
               ],
             ),
 
