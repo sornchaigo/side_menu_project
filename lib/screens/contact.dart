@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Contact extends StatefulWidget {
   static const routeName = '/contact';
 
-  const Contact({Key? key}) : super(key: key);
+  const Contact({super.key});
 
   @override
   State<StatefulWidget> createState() {

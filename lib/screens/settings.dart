@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Settings extends StatefulWidget {
   static const routeName = '/settings';
 
-  const Settings({Key? key}) : super(key: key);
+  const Settings({super.key});
 
   @override
   State<StatefulWidget> createState() {
