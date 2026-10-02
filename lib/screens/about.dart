@@ -12,6 +12,12 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
+  // จำลองข้อมูลที่จะได้ หรือจะเกิดในอนาคต
+  final Future<String> _calculation = Future<String>.delayed(
+    const Duration(seconds: 5),
+    () => throw Exception("ข้อมูลไม่พร้อมใช้งาน"), // 'Data Loaded',
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +25,26 @@ class _AboutState extends State<About> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[Text('About Us Screen')],
+          children: <Widget>[
+            FutureBuilder<String>(
+              // กำหนดชนิดข้อมูล
+              future: _calculation, // ข้อมูล Future
+              //builder: (BuildContext context, AsyncSnapshot snapshot) {
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // ถ้ากำลังรอข้อมูล
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  // ถ้ามี error
+                  return Text('${snapshot.error}');
+                }
+
+                // ถ้าได้ค่าข้อมูลสุดท้าย
+                return Text('Completed ${snapshot.data}');
+              },
+            ),
+          ],
         ),
       ),
     );

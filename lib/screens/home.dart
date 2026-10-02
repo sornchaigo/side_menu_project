@@ -105,6 +105,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
+      drawer: const SideMenu(), // เรียกใช้งาน side menu
       body: TabBarView(
         controller: _tabController, // กำหนดการเรียกใช้งาน TabController
         // ส่วนของเนื้อหา tab
