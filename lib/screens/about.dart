@@ -12,11 +12,12 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
-  // จำลองข้อมูลที่จะได้ หรือจะเกิดในอนาคต
-  final Future<String> _calculation = Future<String>.delayed(
-    const Duration(seconds: 5),
-    () => throw Exception("ข้อมูลไม่พร้อมใช้งาน"), // 'Data Loaded',
-  );
+  // // จำลองข้อมูลที่จะได้ หรือจะเกิดในอนาคต
+  // final Future<String> _calculation = Future<String>.delayed(
+  //   const Duration(seconds: 5),
+  //   // () => throw Exception("ข้อมูลไม่พร้อมใช้งาน"),
+  //   () => 'Data Loaded',
+  // );
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class _AboutState extends State<About> {
           children: <Widget>[
             FutureBuilder<String>(
               // กำหนดชนิดข้อมูล
-              future: _calculation, // ข้อมูล Future
+              future: fetchData(), // ข้อมูล Future
               //builder: (BuildContext context, AsyncSnapshot snapshot) {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,5 +49,14 @@ class _AboutState extends State<About> {
         ),
       ),
     );
+  }
+
+  Future<String> fetchData() async {
+    // จำลองการดึงข้อมูลจาก API
+    final response = await Future.delayed(
+      const Duration(seconds: 2),
+      () => 'Data from API',
+    );
+    return response;
   }
 }
