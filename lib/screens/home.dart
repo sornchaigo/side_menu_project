@@ -24,13 +24,13 @@ class _HomeState extends State<Home> {
     super.initState();
 
     // เรียกใช้ฟังก์ชั่น fetchArticle() เพื่อดึงข้อมูลจาก server
-    articles = fetchArticle();
+    articles = Article.fetch();
   }
 
   void _refreshData() {
     setState(() {
       print("setState"); // สำหรับทดสอบ
-      articles = fetchArticle(); // โหลดข้อมูลใหม่
+      articles = Article.fetch(); // โหลดข้อมูลใหม่
     });
   }
 
