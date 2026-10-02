@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:math';
 
-import '../components/sidemenu.dart';
+import 'package:flutter/material.dart';
+
+import '../models/article.dart';
 
 class Home extends StatefulWidget {
   static const routeName = '/';
@@ -14,148 +15,60 @@ class Home extends StatefulWidget {
   }
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  int _selectedIndex = 0;
+class _HomeState extends State<Home> {
+  // จำลองข้อมูล สร้างลิสรายการ 100 รายการ
+  List<String> items = List<String>.generate(100, (i) => 'Item ${i + 1}');
+
+  // กำหนดตัวแปรข้อมูล articles
+  late Future<List<Article>> articles;
 
   @override
   void initState() {
+    print("initState"); // สำหรับทดสอบ
     super.initState();
-    // กำหนดค่าเริ่มต้น
-    _tabController = TabController(length: 4, vsync: this);
+
+    // เรียกใช้ฟังก์ชั่น fetchArticle() เพื่อดึงข้อมูลจาก server
+    articles = fetchArticle();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  static const List<Widget> _pageWidget = <Widget>[
-    Text('Index 0: สวัสดี', style: TextStyle(fontFamily: "Takowasabi")),
-    Text('Index 1: About'),
-    Text('Index 2: Profile'),
-    Text('Index 3: Contact'),
-    Text('Index 4: Settings'),
-  ];
-
-  static const List<BottomNavigationBarItem> _menuBar =
-      <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'สวัสดี'),
-        BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.card_travel),
-          label: 'Contact',
-        ),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-      ];
-
-  void _onItemTapped(int index) {
+  void _refreshData() {
     setState(() {
-      _selectedIndex = index;
+      print("setState"); // สำหรับทดสอบ
+      Random rng = Random(); // ข้อมูล Random
+      int rd_number = rng.nextInt(20); // สุ่มค่าจาก 0 - 20
+      print(rd_number); // สำหรับทดสอบ
+      // สร้างลิสรายการใหม่
+      items = List<String>.generate(rd_number, (i) => 'Item ${i + 1}');
+
+      articles = fetchArticle(); // โหลดข้อมูลใหม่
     });
-  }
-
-  void _showSnackBar(String text) {
-    // เมื่อกดที่ปุ่ม
-
-    // กำหนดรูปแบบการใช้งาน snackbar
-    final snackBar3 = SnackBar(
-      content: Row(
-        // แสดงข้อมูลอื่นๆ นอกจากข้อความอย่างเดียว
-        children: [
-          Icon(Icons.info_rounded, color: Colors.yellow), // ใส่ไอคอน
-          SizedBox(width: 10), // เพิ่มกล่องช่องว่าง
-          Expanded(child: Text(text)),
-        ],
-      ),
-      duration: const Duration(seconds: 3), // กำหนดเวลาแสดง 3 วินาที
-      width: 300.0, // กำหนดความกว้่าง
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      action: SnackBarAction(
-        label: 'ดูเพิ่มเติม',
-        onPressed: () {
-          // ทำคำสั่งถ้ากดที่ข้อความใน action
-        },
-      ),
-    );
-
-    // แสดงข้อความ snackbar โดยเรียกใช้งานผ่าน ScaffoldMessenger
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(snackBar3);
   }
 
   @override
   Widget build(BuildContext context) {
+    print("build"); // สำหรับทดสอบ
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        bottom: TabBar(
-          controller: _tabController, // กำหนดการเรียกใช้งาน TabController
-          // ส่วนของ tab
-          tabs: const [
-            Tab(icon: Icon(Icons.feed), text: 'Tab 1'),
-            Tab(icon: Icon(Icons.favorite_sharp), text: 'Tab 2'),
-            Tab(icon: Icon(Icons.thumb_up), text: 'Tab 3'),
-            Tab(icon: Icon(Icons.announcement), text: 'Tab 4'),
-          ],
-        ),
-      ),
-      drawer: const SideMenu(), // เรียกใช้งาน side menu
-      body: TabBarView(
-        controller: _tabController, // กำหนดการเรียกใช้งาน TabController
-        // ส่วนของเนื้อหา tab
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Tab Home',
-                  style: TextStyle(fontFamily: "THSarabunNew"),
-                ),
-                ElevatedButton(
-                  // ปุ่มสำหรับทดสอบ
-                  onPressed: () {
-                    // เลื่อนไปยัง index 3 ซึ่งก็คือค่า index ของ tab ที่ 4
-                    _tabController.animateTo(3);
-                  },
-                  child: const Text('Go to Tab 4'),
-                ),
-              ],
-            ),
-          ),
-          const Center(child: Text('Tab Faverite')),
-          const Center(child: Text('Tab Like')),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Tab Commnet'),
-                Text(
-                  'Tab Commnet',
-                  style: TextStyle(
-                    fontFamily: "THSarabunNew",
-                    fontSize: 20,
-                    fontWeight: FontWeight(700),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text('Home')),
+      body: FutureBuilder<List<Article>>(
+        future: articles, // ข้อมูล Future
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No articles found.'));
+          }
 
-      bottomNavigationBar: BottomNavigationBar(
-        items: _menuBar,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.blue,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+          return Text("Complete: ${snapshot.data!.length} articles loaded.");
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        // ปุ่มสำหรับดึงข้อมูลใหม่
+        onPressed: _refreshData,
+        child: const Icon(Icons.refresh),
       ),
     );
   }
