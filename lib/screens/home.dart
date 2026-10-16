@@ -1,93 +1,80 @@
+import 'dart:math';
+ 
 import 'package:flutter/material.dart';
-
-import '../models/article.dart';
-
+   
 class Home extends StatefulWidget {
-  static const routeName = '/';
-
-  const Home({super.key});
-
-  @override
-  State<StatefulWidget> createState() {
-    return _HomeState();
-  }
+    static const routeName = '/';
+  
+    const Home({Key? key}) : super(key: key);
+   
+    @override
+    State<StatefulWidget> createState() {
+        return _HomeState();
+    }
 }
-
+   
 class _HomeState extends State<Home> {
-  // จำลองข้อมูล สร้างลิสรายการ 100 รายการ
-  // กำหนดตัวแปรข้อมูล articles
-  late Future<List<Article>> articles;
-
-  @override
-  void initState() {
-    print("initState"); // สำหรับทดสอบ
-    super.initState();
-
-    // เรียกใช้ฟังก์ชั่น fetchArticle() เพื่อดึงข้อมูลจาก server
-    articles = Article.fetch();
-  }
-
-  void _refreshData() {
-    setState(() {
-      print("setState"); // สำหรับทดสอบ
-      articles = Article.fetch(); // โหลดข้อมูลใหม่
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print("build"); // สำหรับทดสอบ
-    return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: FutureBuilder<List<Article>>(
-        future: articles, // ข้อมูล Future
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No articles found.'));
-          }
-
-          return Column(
-            children: [
-              Container(
-                // สร้างส่วน header ของลิสรายการ
-                padding: const EdgeInsets.all(5.0),
-                decoration: BoxDecoration(color: Colors.teal.withAlpha(100)),
-                child: Row(
-                  children: [
-                    Text(
-                      'Total ${snapshot.data!.length} items',
-                    ), // แสดงจำนวนรายการ
-                  ],
+ 
+    // จำลองข้อมูล สร้างลิสรายการ 100 รายการ
+    List<String> items = List<String>.generate(100, (i) => 'Item ${i+1}');
+   
+    @override
+    void initState() {
+      print("initState"); // สำหรับทดสอบ
+      super.initState(); 
+    }     
+ 
+    void _refreshData(){
+      setState(() {
+        print("setState"); // สำหรับทดสอบ
+        Random rng = Random(); // ข้อมูล Random
+        int rd_number = rng.nextInt(20); // สุ่มค่าจาก 0 - 20
+        print(rd_number); // สำหรับทดสอบ
+        // สร้างลิสรายการใหม่
+        items = List<String>.generate(rd_number, (i) => 'Item ${i+1}');
+      });
+    }
+ 
+    @override
+    Widget build(BuildContext context) {
+        print("build");  // สำหรับทดสอบ
+        return Scaffold(
+            appBar: AppBar(
+                title: Text('Home'),
+            ),
+            body: Column(
+              children: [
+                Container( // สร้างส่วน header ของลิสรายการ
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withAlpha(100),
+                //    borderRadius: BorderRadius.circular(8.0),
+                  ),                  
+                  child: Row(                  
+                    children: [
+                      Text('Total ${items.length} items'),
+                    ],
+                  ),
                 ),
+                Expanded(
+                      child: items.length > 0 // กำหนดเงื่อนไขตรงนี้
+                      ? ListView.separated( // กรณีมีรายการ แสดงปกติ
+                              itemCount: items.length,
+                              itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text('${items[index]}'),
+                                  );
+                              },
+                              separatorBuilder: (BuildContext context, int index) => const Divider(),                    
+                        )
+                      : const Center(child: Text('No items')), // กรณีไม่มีรายการ
+                  ),
+              ],
+            ),
+              floatingActionButton: FloatingActionButton(// ปุ่มสำหรับดึงข้อมูลใหม่
+                  onPressed: _refreshData,
+                  child: const Icon(Icons.refresh),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    final article = snapshot.data![index];
-                    return ListTile(
-                      title: Text('${article.id}: ${article.title}'),
-                      subtitle: Text(article.body),
-                      trailing: Text('User ID: ${article.userId}'),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        // ปุ่มสำหรับดึงข้อมูลใหม่
-        onPressed: _refreshData,
-        child: const Icon(Icons.refresh),
-      ),
-    );
-  }
+        );
+    }
 }
