@@ -28,8 +28,8 @@ class _HomeState extends State<Home> {
     super.initState();
 
     // โหลดข้อมูล ใหม่ ผ่าน method fetch
-    articles = Article.fetch();
     loadData();
+    articles = Article.fetch();
   }
 
   void loadData() async {
@@ -97,15 +97,64 @@ class _HomeState extends State<Home> {
                           // กรณีมีรายการ แสดงปกติ
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
-                            User user = _findUser(snapshot.data![index].userId);
-                            return ListTile(
-                              title: Text(
-                                snapshot.data![index].title,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                            Article article = snapshot.data![index];
+                            User user = _findUser(article.userId);
+
+                            return Card(
+                              // shape: BeveledRectangleBorder(
+                              shape: RoundedRectangleBorder(
+                                // รูปแบบ
+                                borderRadius: BorderRadius.circular(20),
+                                side: BorderSide(
+                                  width: 2,
+                                  color: Colors.blue,
+                                  style: BorderStyle.solid,
+                                ),
                               ),
-                              subtitle: Text(snapshot.data![index].body),
-                              trailing: Text("${user.name}"),
+                              margin: const EdgeInsets.all(5.0), // การเยื้องขอบ
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(article.title, style: TextStyle(fontWeight: FontWeight.bold),),
+                                    subtitle: Text(article.body),
+                                    trailing: Text("By ${user.name}"),
+                                  ),
+                                  const Divider(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      TextButton(
+                                        child: const Text('Like'),
+                                        onPressed: () {
+                                          /* ... */
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
+                                      TextButton(
+                                        child: const Text('Comment'),
+                                        onPressed: () {
+                                          /* ... */
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
+                                          color: Colors.green.withAlpha(50),
+                                          alignment: Alignment.centerRight,
+                                          child: TextButton(
+                                            child: const Text('Share'),
+                                            onPressed: () {
+                                              /* ... */
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             );
+
                           },
                           separatorBuilder: (BuildContext context, int index) =>
                               const Divider(),
