@@ -6,6 +6,8 @@ import 'package:http/http.dart'
     as http; // ดึงข้อมูลจัดการข้อมูลบนเครือข่าย internet
 
 class Product {
+  static final String url = 'https://fakestoreapi.com/products';
+
   int id;
   String title;
   num price;
@@ -42,7 +44,7 @@ class Product {
   static Future<List<Product>> fetch() async {
     // ทำการดึงข้อมูลจาก server ตาม url ที่กำหนด
     final response = await http.get(
-      Uri.parse('https://fakestoreapi.com/products'),
+      Uri.parse(url),
     );
 
     if (response.statusCode != 200) {
