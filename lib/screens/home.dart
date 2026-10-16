@@ -18,6 +18,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   var logger = Logger();
 
+  // ตัว ScrollController สำหรับจัดการการ scroll ใน ListView
+  final ScrollController _scrollController = ScrollController();
+
   // กำนหดตัวแปรข้อมูล articles
   late Future<List<Article>> articles;
   late List<User> users;
@@ -41,11 +44,17 @@ class _HomeState extends State<Home> {
     return users.where((user) => user.id == userId).first;
   }
 
-  void _refreshData() {
-    setState(() {
-      logger.i("setState");
+  // void _refreshData() {
+  //   setState(() {
+  //     logger.i("setState");
 
-      articles = Article.fetch(); // โหลดข้อมูล Article ใหม่
+  //     articles = Article.fetch(); // โหลดข้อมูล Article ใหม่
+  //   });
+  // }
+
+  Future<void> _refresh() async {
+    setState(() {
+      articles = Article.fetch();
     });
   }
 
@@ -90,74 +99,87 @@ class _HomeState extends State<Home> {
                 ),
                 Expanded(
                   // ส่วนของลิสรายการ
-                  child:
-                      snapshot.data!.length >
-                          0 // กำหนดเงื่อนไขตรงนี้
-                      ? ListView.separated(
-                          // กรณีมีรายการ แสดงปกติ
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            Article article = snapshot.data![index];
-                            User user = _findUser(article.userId);
+                  child: snapshot.data!.isNotEmpty
+                      ? // กำหนดเงื่อนไขตรงนี้
+                        RefreshIndicator(
+                          onRefresh: _refresh,
+                          child: ListView.separated(
+                            // กำหนด controller ที่จะใช้งานร่วม
+                            controller: _scrollController, 
+                            // กรณีมีรายการ แสดงปกติ
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              Article article = snapshot.data![index];
+                              User user = _findUser(article.userId);
 
-                            return Card(
-                              // shape: BeveledRectangleBorder(
-                              shape: RoundedRectangleBorder(
-                                // รูปแบบ
-                                borderRadius: BorderRadius.circular(20),
-                                side: BorderSide(
-                                  width: 2,
-                                  color: Colors.blue,
-                                  style: BorderStyle.solid,
-                                ),
-                              ),
-                              margin: const EdgeInsets.all(5.0), // การเยื้องขอบ
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    title: Text(article.title, style: TextStyle(fontWeight: FontWeight.bold),),
-                                    subtitle: Text(article.body),
-                                    trailing: Text("By ${user.name}"),
+                              return Card(
+                                // shape: BeveledRectangleBorder(
+                                shape: RoundedRectangleBorder(
+                                  // รูปแบบ
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(
+                                    width: 2,
+                                    color: Colors.blue,
+                                    style: BorderStyle.solid,
                                   ),
-                                  const Divider(),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      TextButton(
-                                        child: const Text('Like'),
-                                        onPressed: () {
-                                          /* ... */
-                                        },
-                                      ),
-                                      const SizedBox(width: 8),
-                                      TextButton(
-                                        child: const Text('Comment'),
-                                        onPressed: () {
-                                          /* ... */
-                                        },
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Container(
-                                          color: Colors.green.withAlpha(50),
-                                          alignment: Alignment.centerRight,
-                                          child: TextButton(
-                                            child: const Text('Share'),
-                                            onPressed: () {
-                                              /* ... */
-                                            },
-                                          ),
+                                ),
+                                margin: const EdgeInsets.all(
+                                  5.0,
+                                ), // การเยื้องขอบ
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        article.title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(),
+                                      subtitle: Text(article.body),
+                                      trailing: Text("By ${user.name}"),
+                                    ),
+                                    const Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        TextButton(
+                                          child: const Text('Like'),
+                                          onPressed: () {
+                                            /* ... */
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                        TextButton(
+                                          child: const Text('Comment'),
+                                          onPressed: () {
+                                            /* ... */
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Container(
+                                            color: Colors.green.withAlpha(50),
+                                            alignment: Alignment.centerRight,
+                                            child: TextButton(
+                                              child: const Text('Share'),
+                                              onPressed: () {
+                                                /* ... */
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder: (
+                              BuildContext context,
+                              int index,
+                            ) => const Divider(),
+                          ),
                         )
                       : const Center(
                           child: Text('No items'),
@@ -168,11 +190,11 @@ class _HomeState extends State<Home> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        // ปุ่มสำหรับดึงข้อมูลใหม่
-        onPressed: _refreshData,
-        child: const Icon(Icons.refresh),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   // ปุ่มสำหรับดึงข้อมูลใหม่
+      //   onPressed: _refreshData,
+      //   child: const Icon(Icons.refresh),
+      // ),
     );
   }
 }
