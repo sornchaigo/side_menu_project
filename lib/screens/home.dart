@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import "../models/article.dart";
+import "../models/user.dart";
 
 class Home extends StatefulWidget {
   static const routeName = '/';
@@ -21,21 +20,32 @@ class _HomeState extends State<Home> {
 
   // กำนหดตัวแปรข้อมูล articles
   late Future<List<Article>> articles;
+  late List<User> users;
 
   @override
   void initState() {
     logger.i("initState");
     super.initState();
 
-    articles =
-        Article.fetchArticle(); // ทำตามสัญญา กำหนดค่า โดยให้ไปดึงจากฟังก์ชั่น
+    // โหลดข้อมูล ใหม่ ผ่าน method fetch
+    articles = Article.fetch();
+    loadData();
+  }
+
+  void loadData() async {
+    users = await User.fetch();
+  }
+
+  User _findUser(int userId) {
+    // 2. Apply the .where() filter on the resulting List
+    return users.where((user) => user.id == userId).first;
   }
 
   void _refreshData() {
     setState(() {
       logger.i("setState");
 
-      articles = Article.fetchArticle(); // โหลดข้อมูลใหม่
+      articles = Article.fetch(); // โหลดข้อมูล Article ใหม่
     });
   }
 
@@ -87,8 +97,14 @@ class _HomeState extends State<Home> {
                           // กรณีมีรายการ แสดงปกติ
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
+                            User user = _findUser(snapshot.data![index].userId);
                             return ListTile(
-                              title: Text(snapshot.data![index].title),
+                              title: Text(
+                                snapshot.data![index].title,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text(snapshot.data![index].body),
+                              trailing: Text("${user.name}"),
                             );
                           },
                           separatorBuilder: (BuildContext context, int index) =>
