@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/counter_model.dart';
 
 class Profile extends StatefulWidget {
   static const routeName = '/profile';
@@ -19,8 +22,19 @@ class _ProfileState extends State<Profile> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[Text('Profile Screen')],
+
+          children: <Widget>[
+            Text('Profile Screen'),
+            Text('You have pushed the button this many times:'),
+            Count(),
+          ],
         ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        key: const Key('increment_Button'),
+        onPressed: () => context.read<CounterModel>().increment(),
+        child: const Icon(Icons.add),
       ),
     );
   }
