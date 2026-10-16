@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:side_menu_project/components/sidemenu.dart';
 
 import "../models/product.dart";
-import 'products.dart';
 
 class Home extends StatefulWidget {
   static const routeName = '/';
 
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -80,53 +80,130 @@ class _HomeState extends State<Home> {
                           .isNotEmpty // กำหนดเงื่อนไขตรงนี้
                       ? RefreshIndicator(
                           onRefresh: _refresh,
-                          child: ListView.separated(
-                            // กรณีมีรายการ แสดงปกติ
-                            controller: _scrollController, // กำนหนด controller ที่จะใช้งานร่วม
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              Product product = snapshot.data![index];
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                              5.0,
+                            ), // ช่องว่างระหว่างขอบ
+                            child: GridView.builder(
+                              controller: _scrollController, // กำนหนด controller ที่จะใช้งานร่วม
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).orientation ==
+                                            Orientation.portrait
+                                        ? 3
+                                        : 4,
+                                    childAspectRatio: 0.67,
+                                  ),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                Product product = snapshot.data![index];
 
-                              Widget card; // สร้างเป็นตัวแปร
-                              card = Card(
-                                // การเยื้องขอบ
-                                margin: const EdgeInsets.all(5.0),
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      leading: Image.network(
-                                        product.image,
-                                        width: 100.0,
+                                Widget card; // สร้างเป็นตัวแปร
+                                card = Container(
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(_viewProduct(context, product));
+                                    },
+                                    child: Card(
+                                      child: Column(
+                                        children: [
+                                          AspectRatio(
+                                            aspectRatio: 1.0,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                              ),
+                                              child: Image.network(
+                                                product.image,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: AspectRatio(
+                                              aspectRatio: 2.0,
+                                              child: Container(
+                                                color: Colors.grey.withAlpha(
+                                                  20,
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    5.0,
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      SizedBox(height: 5.0),
+                                                      Text(
+                                                        product.title,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                      SizedBox(height: 5.0),
+                                                      Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text: 'Price: ',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontSize: 15.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                                  '\$ ${product.price}',
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                                  'Category: ',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontSize: 15.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                                  '${product.category}',
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      title: Text(product.title),
-                                      subtitle: Text(
-                                        'Price: \$${product.price}',
-                                      ),
-                                      trailing: Icon(Icons.more_vert),
-                                      onTap: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         Products(), // กำหนด PageRoute
-                                        //     settings: RouteSettings(
-                                        //       arguments: product, // ส่งค่าไปใน  arguments
-                                        //     ),
-                                        //   ),
-                                        // );
-
-                                        Navigator.of(context).push(_viewProduct(context, product));
-                                      },
                                     ),
-                                  ],
-                                ),
-                              );
-                              return card;
-                            },
-                            separatorBuilder: (
-                              BuildContext context,
-                              int index,
-                            ) => const SizedBox(),
+                                  ),
+                                );
+
+                                return card;
+                              },
+                            ),
                           ),
                         )
                       : const Center(
@@ -138,6 +215,7 @@ class _HomeState extends State<Home> {
           },
         ),
       ),
+      drawer: SideMenu(),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class About extends StatefulWidget {
   static const routeName = '/about';
@@ -12,146 +13,104 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
-  // // จำลองข้อมูลที่จะได้ หรือจะเกิดในอนาคต
-  // final Future<String> _calculation = Future<String>.delayed(
-  //   const Duration(seconds: 5),
-  //   // () => throw Exception("ข้อมูลไม่พร้อมใช้งาน"),
-  //   () => 'Data Loaded',
-  // );
+  final logger = Logger();
 
-  // // จำลองข้อมูล stream
-  // final Stream<int> _bids = (() async* {
-  //   await Future<void>.delayed(const Duration(seconds: 3));
-  //   yield 1;
-  //   await Future<void>.delayed(const Duration(seconds: 3));
-  //   // yield 2;
-  //   throw Exception('Intentional exception');
-  //   await Future<void>.delayed(const Duration(seconds: 3));
-  //   yield 3;
-  //   await Future<void>.delayed(const Duration(seconds: 3));
-  // })();
-
+  int a = 10;
   @override
   Widget build(BuildContext context) {
+    logger.i(MediaQuery.of(context).size); // สำหรับทดสอบ ดูความกว้าง สูง หน้าจอ
+
     return Scaffold(
       appBar: AppBar(title: Text('About Us')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            StreamBuilder<int>(
-              // ชนิดข้อมูล Stream
-              stream: _bidStream(), // ข้อมูล Stream
-              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                print("builder"); // สำหรับทดสอบ
-                print(snapshot.connectionState); // สำหรับทดสอบ
-                List<Widget> children;
-                // กำหนดตัวแปร สำหรับเก็บ widget ที่จะคืนค่ากลับ
-                if (snapshot.hasError) {
-                  print("snapshot.hasError"); // สำหรับทดสอบ
-                  print(snapshot.stackTrace); // สำหรับทดสอบ
-                  // กรณี error
-                  children = <Widget>[
-                    const Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 60,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Text('Error: ${snapshot.error}'),
-                    ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(top: 8),
-                    //   child: Text('Stack trace: ${snapshot.stackTrace}'),
-                    // ),
-                  ];
-                } else {
-                  // กรณีอื่นๆ
-                  // ตรวจสอบค่าสถานะการเชื่อมต่อ แล้วทำคำสั่งตามเงื่อนไขนั้นๆ
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none: // กรณีสถานะเป็น none
-                      // สร้าง widget สำหรับกรณีนี้ไว้ในตัวแปร children
-                      children = const <Widget>[
-                        Icon(Icons.info, color: Colors.blue, size: 60),
-                        Padding(
-                          padding: EdgeInsets.only(top: 16),
-                          child: Text('Select a lot'),
-                        ),
-                      ];
-                      break;
-                    case ConnectionState.waiting: // กรณีสถานะเป็น waiting
-                      // สร้าง widget สำหรับกรณีนี้ไว้ในตัวแปร children
-                      children = const <Widget>[
-                        SizedBox(
-                          child: CircularProgressIndicator(),
-                          width: 60,
-                          height: 60,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 16),
-                          child: Text('Awaiting bids...'),
-                        ),
-                      ];
-                      break;
-                    case ConnectionState.active: // กรณีสถานะเป็น active
-                      // สร้าง widget สำหรับกรณีนี้ไว้ในตัวแปร children
-                      children = <Widget>[
-                        const Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.green,
-                          size: 60,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Text('\$${snapshot.data}'),
-                        ),
-                      ];
-                      break;
-                    case ConnectionState.done: // กรณีสถานะเป็น done
-                      // สร้าง widget สำหรับกรณีนี้ไว้ในตัวแปร children
-                      children = <Widget>[
-                        const Icon(Icons.info, color: Colors.blue, size: 60),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Text('\$${snapshot.data} (closed)'),
-                        ),
-                      ];
-                      break;
-                  }
-                }
+        child: Padding(
+          padding: const EdgeInsets.all(5.0), // ช่องว่างระหว่างขอบ
+          // child: GridView.extent(
+          //   mainAxisSpacing: 10.0,
+          //   crossAxisSpacing: 5.0,
 
-                // คืนค่าเป็นรูปแบบ widget ที่กำหนดจากตัวแปร children
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: children,
-                );
-              },
+          //   // crossAxisCount: 2,
+          //   // crossAxisCount:
+          //   //     MediaQuery.of(context).orientation == Orientation.portrait
+          //   //     ? 2
+          //   //     : 3,
+          //   // maxCrossAxisExtent: 100,
+          //   maxCrossAxisExtent:
+          //       (MediaQuery.of(context).size.width / 3), // แบ่งเป็น 3 คอลัมน์
+          //   childAspectRatio: 0.67,
+
+          //   children: List.generate(10, (index) {
+          //     a += 10;
+          //     return Container(
+          //       color: Colors.blue.withAlpha(100),
+          //       child: Column(
+          //         children: [
+          //           AspectRatio(
+          //             aspectRatio: 1.0,
+          //             child: Container(
+          //               decoration: BoxDecoration(
+          //                 color: Colors.blue.withAlpha(100),
+          //                 border: Border.all(color: Colors.blue, width: 1.0),
+          //               ),
+          //               child: Text('Picture ${index}'),
+          //             ),
+          //           ),
+          //           Expanded(
+          //             child: AspectRatio(
+          //               aspectRatio: 2.0,
+          //               child: Container(
+          //                 decoration: BoxDecoration(
+          //                   color: Colors.yellow.withAlpha(200),
+          //                   border: Border.all(
+          //                     color: Colors.yellow,
+          //                     width: 1.0,
+          //                   ),
+          //                 ),
+          //                 child: Text('Item ${index}'),
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     );
+          //   }),
+          // ),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, // แสดง 3 คอลัมน์
             ),
-          ],
+            itemCount: 300,
+            itemBuilder: (BuildContext context, int index) {
+              return Column(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withAlpha(100),
+                        border: Border.all(color: Colors.blue, width: 1.0),
+                      ),
+                      child: Text('Picture ${index}'),
+                    ),
+                  ),
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 2.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.yellow.withAlpha(200),
+                          border: Border.all(color: Colors.yellow, width: 1.0),
+                        ),
+                        child: Text('Item ${index}'),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
-  }
-
-  Future<String> fetchData() async {
-    // จำลองการดึงข้อมูลจาก API
-    final response = await Future.delayed(
-      const Duration(seconds: 2),
-      () => 'Data from API',
-    );
-    return response;
-  }
-
-  Stream<int> _bidStream() async* {
-    // จำลองการส่งข้อมูล stream
-    await Future<void>.delayed(const Duration(seconds: 3));
-    yield 1;
-    await Future<void>.delayed(const Duration(seconds: 3));
-    yield 2;
-    // throw Exception('Intentional exception');
-    await Future<void>.delayed(const Duration(seconds: 3));
-    yield 3;
   }
 }
